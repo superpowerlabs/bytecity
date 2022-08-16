@@ -7,5 +7,4 @@ contract USDCoinMock is ERC20 {
   constructor() ERC20("USD Coin", "USDC") {
     _mint(msg.sender, 10**32);
   }
-
 }

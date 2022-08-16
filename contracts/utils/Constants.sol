@@ -5,6 +5,6 @@ pragma solidity 0.8.11;
 // (c) 2022+ SuperPower Labs Inc.
 
 contract Constants {
-  uint8 public constant USDT = 1;
-  uint8 public constant USDC = 2;
+  uint256 public constant USDT = 1;
+  uint256 public constant USDC = 2;
 }

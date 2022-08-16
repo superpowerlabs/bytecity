@@ -10,7 +10,7 @@ const {upgrades} = require("hardhat");
 // tests to be fixed
 
 function normalize(val, n = 18) {
-  return "" + val + "0".repeat(n);
+  return "" + val + '0'.repeat(n);
 }
 
 describe("#Integration test", function () {
