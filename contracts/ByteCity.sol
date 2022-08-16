@@ -46,6 +46,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
     require(_stableCoins[tokenType] == address(0), "ByteCity: stable coin already set");
     require(tokenType > 0 && tokenType < USDC + 1, "ByteCity: invalid tokenType");
     _stableCoins[tokenType] = stableCoin;
+    emit StableCoinAdded(tokenType, stableCoin);
   }
 
   function deposit(

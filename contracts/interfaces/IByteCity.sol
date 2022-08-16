@@ -4,6 +4,8 @@ pragma solidity 0.8.11;
 import "./IUser.sol";
 
 interface IByteCity is IUser {
+  event StableCoinAdded(uint8 tokenType, address stableCoin);
+
   function addStableCoin(uint8 tokenType, address stableCoin) external;
 
   function deposit(
