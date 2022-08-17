@@ -2,8 +2,10 @@ process.env.NODE_ENV = "test";
 const {expect, assert} = require("chai");
 const DeployUtils = require("../scripts/lib/DeployUtils");
 
+
 const {
   initEthers,
+    assertThrowsMessage,
   BN,
 } = require("./helpers");
 
@@ -53,6 +55,9 @@ describe("#Integration test", function () {
     const id2 = 2846735;
     await city.deposit(1, amount, id2);
     expect((await city.depositByIndex(deployer.address, 1)).id).equal(id2)
+    expect((await city.depositById(id2)).id).equal(id2)
+
+    expect((await city.depositById(3726354)).id).equal(0)
 
   });
 });

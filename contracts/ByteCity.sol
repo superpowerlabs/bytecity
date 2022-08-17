@@ -14,6 +14,8 @@ import "./interfaces/IERC20Receiver.sol";
 import "./interfaces/IByteCity.sol";
 import "./utils/Constants.sol";
 
+//import "hardhat/console.sol";
+
 contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, OwnableUpgradeable, UUPSUpgradeable {
   using AddressUpgradeable for address;
   using SafeMathUpgradeable for uint256;
@@ -67,6 +69,9 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
   }
 
   function depositByIndex(address user, uint256 index) public view override returns (USDDeposit memory) {
+    if (_users[user].deposits.length <= index) {
+      return USDDeposit({id: 0, tokenType: 0, amount: 0, createdAt: 0});
+    }
     return _users[user].deposits[index];
   }
 
