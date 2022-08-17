@@ -100,6 +100,6 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
     if (amount == 0) {
       amount = balance;
     }
-    token.transferFrom(address(this), beneficiary, amount);
+    token.transfer(beneficiary, amount);
   }
 }
