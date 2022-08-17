@@ -11,6 +11,9 @@ async function main() {
   const usdc = await deployUtils.deploy("USDCoinMock");
   const usdt = await deployUtils.deploy("TetherMock");
   const city = await deployUtils.deployProxy("ByteCity");
+
+  await deployUtils.Tx(city.addStableCoin(1, usdt.address), "Setting tether")
+  await deployUtils.Tx(city.addStableCoin(2, usdc.address), "Setting USDC");
 }
 
 main()
