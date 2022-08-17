@@ -1,4 +1,6 @@
+process.env.NODE_ENV = "test";
 const {expect, assert} = require("chai");
+const DeployUtils = require("../scripts/lib/DeployUtils");
 
 const {
   initEthers,
@@ -14,21 +16,24 @@ function normalize(val, n = 18) {
 }
 
 describe("#Integration test", function () {
-  let ByteCity, byteCity;
-  let USDC, usdc;
-  let USDT, usdt;
+  let city;
+  let usdc;
+  let usdt;
   let deployer, validator, bob, alice, fred, treasury;
+  let deployUtils = new DeployUtils(ethers);
 
   before(async function () {
     initEthers(ethers);
     [deployer, bob, alice, fred, validator, treasury] = await ethers.getSigners();
-    ByteCity = await ethers.getContractFactory("ByteCity");
-    USDT = await ethers.getContractFactory("TetherMock");
-    USDC = await ethers.getContractFactory("USDCoinMock");
   });
 
   async function initAndDeploy(initSeedPool = true) {
+    usdc = await deployUtils.deploy("USDCoinMock");
+    usdt = await deployUtils.deploy("TetherMock");
+    city = await deployUtils.deployProxy("ByteCity");
 
+    await deployUtils.Tx(city.addStableCoin(1, usdt.address), "Setting tether")
+    await deployUtils.Tx(city.addStableCoin(2, usdc.address), "Setting USDC");
   }
 
   beforeEach(async function () {
@@ -37,6 +42,17 @@ describe("#Integration test", function () {
 
   it("should manage the full flow", async function () {
     const amount = ethers.utils.parseEther("10000");
+    await usdc.approve(city.address, amount.mul(3));
+    const id = 1846735;
+    await city.deposit(2, amount, id);
+    expect((await city.depositByIndex(deployer.address, 0)).id).equal(id)
+
+    await expect(city.deposit(2, amount, id)).revertedWith("ByteCity: depositId already used")
+
+    await usdt.approve(city.address, amount);
+    const id2 = 2846735;
+    await city.deposit(1, amount, id2);
+    expect((await city.depositByIndex(deployer.address, 1)).id).equal(id2)
 
   });
 });

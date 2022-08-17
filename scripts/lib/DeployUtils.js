@@ -4,13 +4,7 @@ const {Contract} = require("@ethersproject/contracts");
 const abi = require("ethereumjs-abi");
 const {deployProxyImpl} = require("@openzeppelin/hardhat-upgrades/dist/utils");
 
-let deployedJson;
-
-if (process.env.NODE_ENV === "test") {
-  deployedJson = require("../../export/deployedForTest.json");
-} else {
-  deployedJson = require("../../export/deployed.json");
-}
+let deployedJson = require("../../export/deployed.json");
 
 const oZChainName = {
   1: "mainnet",
@@ -43,6 +37,12 @@ const scanner = {
   41224: "snowtrace.io",
   43113: "testnet.snowtrace.io",
 };
+
+function debug(...args) {
+  if (process.env.NODE_ENV !== "test") {
+    console.debug(...args);
+  }
+}
 
 class DeployUtils {
   constructor(ethers) {
@@ -90,24 +90,24 @@ class DeployUtils {
 
   async Tx(promise, msg) {
     if (msg) {
-      console.debug(msg);
+      debug(msg);
     }
     let tx = await promise;
-    console.log("Tx:", tx.hash);
+    debug("Tx:", tx.hash);
     await tx.wait();
-    console.log("Mined.");
+    debug("Mined.");
   }
 
   async deploy(contractName, ...args) {
     const chainId = await this.currentChainId();
-    console.debug("Deploying", contractName, "to", this.network(chainId));
+    debug("Deploying", contractName, "to", this.network(chainId));
     const contract = await ethers.getContractFactory(contractName);
     const deployed = await contract.deploy(...args);
-    console.debug("Tx:", deployed.deployTransaction.hash);
+    debug("Tx:", deployed.deployTransaction.hash);
     await deployed.deployed();
-    console.debug("Deployed at", deployed.address);
+    debug("Deployed at", deployed.address);
     await this.saveDeployed(chainId, [contractName], [deployed.address]);
-    console.debug(`To verify the source code:
+    debug(`To verify the source code:
     
   npx hardhat verify --show-stack-traces --network ${this.network(chainId)} ${deployed.address} ${[...args]
       .map((e) => e.toString())
@@ -125,26 +125,26 @@ class DeployUtils {
 
   async deployProxy(contractName, ...args) {
     const chainId = await this.currentChainId();
-    console.debug("Deploying", contractName, "to", this.network(chainId));
+    debug("Deploying", contractName, "to", this.network(chainId));
     const contract = await ethers.getContractFactory(contractName);
     const deployed = await upgrades.deployProxy(contract, [...args]);
-    console.debug("Tx:", deployed.deployTransaction.hash);
+    debug("Tx:", deployed.deployTransaction.hash);
     await deployed.deployed();
-    console.debug("Deployed at", deployed.address);
+    debug("Deployed at", deployed.address);
     await this.saveDeployed(chainId, [contractName], [deployed.address]);
-    console.debug(await this.verifyCodeInstructions(contractName, deployed.deployTransaction.hash));
+    debug(await this.verifyCodeInstructions(contractName, deployed.deployTransaction.hash));
     return deployed;
   }
 
   async upgradeProxy(contractName, gasLimit) {
     const chainId = await this.currentChainId();
-    console.debug("Upgrading", contractName, "to", this.network(chainId));
+    debug("Upgrading", contractName, "to", this.network(chainId));
     const Contract = await ethers.getContractFactory(contractName);
     const upgraded = await upgrades.upgradeProxy(deployedJson[chainId][contractName], Contract, gasLimit ? {gasLimit} : {});
-    console.debug("Tx:", upgraded.deployTransaction.hash);
+    debug("Tx:", upgraded.deployTransaction.hash);
     await upgraded.deployed();
-    console.debug("Upgraded");
-    console.debug(await this.verifyCodeInstructions(contractName, upgraded.deployTransaction.hash));
+    debug("Upgraded");
+    debug(await this.verifyCodeInstructions(contractName, upgraded.deployTransaction.hash));
     return upgraded;
   }
 

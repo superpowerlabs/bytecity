@@ -51,18 +51,19 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
 
   function deposit(
     uint8 tokenType,
-    uint128 amount,
+    uint256 amount,
     uint32 depositId
   ) external override {
     require(_stableCoins[tokenType] != address(0), "ByteCity: unsupported stable coin");
-    _users[_msgSender()].amounts[tokenType] += amount;
+    require(_depositsById[depositId].user == address(0), "ByteCity: depositId already used");
+    _users[_msgSender()].amounts[tokenType] += uint128(amount);
     _depositsById[depositId] = DepositInfo({index: uint16(_users[_msgSender()].deposits.length), user: _msgSender()});
     _users[_msgSender()].deposits.push(
-      USDDeposit({id: depositId, tokenType: tokenType, amount: amount, createdAt: uint32(block.timestamp)})
+      USDDeposit({id: depositId, tokenType: tokenType, amount: uint128(amount), createdAt: uint32(block.timestamp)})
     );
-    emit USDDeposited(_msgSender(), tokenType, amount, depositId);
+    emit USDDeposited(_msgSender(), tokenType, uint128(amount), depositId);
     // this will fail if spend not approved
-    IERC20(_stableCoins[tokenType]).transferFrom(_msgSender(), address(this), amount);
+    IERC20(_stableCoins[tokenType]).transferFrom(_msgSender(), address(this), uint128(amount));
   }
 
   function depositByIndex(address user, uint256 index) public view override returns (USDDeposit memory) {

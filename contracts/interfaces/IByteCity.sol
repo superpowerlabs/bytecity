@@ -10,7 +10,7 @@ interface IByteCity is IUser {
 
   function deposit(
     uint8 tokenType,
-    uint128 amount,
+    uint256 amount,
     uint32 depositId
   ) external;
 
