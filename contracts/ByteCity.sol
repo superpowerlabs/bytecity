@@ -70,7 +70,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
 
   function depositByIndex(address user, uint256 index) public view override returns (USDDeposit memory) {
     if (_users[user].deposits.length <= index) {
-      return USDDeposit({id: 0, tokenType: 0, amount: 0, createdAt: 0});
+      return USDDeposit(0, 0, 0, 0);
     }
     return _users[user].deposits[index];
   }
