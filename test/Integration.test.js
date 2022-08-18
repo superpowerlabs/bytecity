@@ -55,9 +55,10 @@ describe("#Integration test", function () {
     const id2 = 2846735;
     await city.deposit(1, amount, id2);
     expect((await city.depositByIndex(deployer.address, 1)).id).equal(id2)
-    expect((await city.depositById(id2)).id).equal(id2)
+    expect((await city.depositById(id2))[0].id).equal(id2)
+    expect((await city.depositById(id2))[1]).equal(deployer.address)
 
-    expect((await city.depositById(3726354)).id).equal(0)
+    expect((await city.depositById(3726354))[0].id).equal(0)
 
   });
 });

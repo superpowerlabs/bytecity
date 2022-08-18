@@ -24,7 +24,7 @@ interface IByteCity is IUser {
 
   // To just check if the deposit exists, check something like
   // depositById(depositId).tokenType != 0
-  function depositById(uint32 depositId) external view returns (USDDeposit memory);
+  function depositById(uint32 depositId) external view returns (USDDeposit memory, address user);
 
   function withdrawUSD(
     uint8 tokenType,
