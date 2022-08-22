@@ -20,7 +20,7 @@ interface IByteCity is IUser {
 
   function totalDepositedAmount(address user, uint8 tokenType) external view returns (uint128);
 
-  function depositsAmount(address user) external view returns (uint256);
+  function numberOfDeposits(address user) external view returns (uint256);
 
   // To just check if the deposit exists, check something like
   // depositById(depositId).tokenType != 0
