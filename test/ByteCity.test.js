@@ -119,7 +119,7 @@ describe("ByteCity", function () {
     expect(await city.totalDepositedAmount(deployer.address, stableCoinId1)).equal(0);
   });
 
-  // depositsAmount(address user)
+  // numberOfDeposits(address user)
   it("should return the total number of deposit for user", async function () {
     const amount = ethers.utils.parseEther("10000");
     const id1 = 123456;
@@ -127,7 +127,7 @@ describe("ByteCity", function () {
     await usdc.approve(city.address, amount.mul(3));
     await city.deposit(stableCoinId2, amount, id1);
     await city.deposit(stableCoinId2, amount, id2);
-    expect(await city.depositsAmount(deployer.address)).equal(2);
+    expect(await city.numberOfDeposits(deployer.address)).equal(2);
   });
 
   // depositById(uint32 depositId)
