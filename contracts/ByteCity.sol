@@ -21,7 +21,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
   using SafeMathUpgradeable for uint256;
 
   mapping(uint8 => address) private _stableCoins;
-  mapping(uint32 => DepositInfo) private _depositsById;
+  mapping(uint64 => DepositInfo) private _depositsById;
   mapping(address => User) private _users;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -54,7 +54,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
   function deposit(
     uint8 tokenType,
     uint256 amount,
-    uint32 depositId
+    uint64 depositId
   ) external override {
     require(_stableCoins[tokenType] != address(0), "ByteCity: unsupported stable coin");
     require(_depositsById[depositId].user == address(0), "ByteCity: depositId already used");
@@ -85,7 +85,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
     return _users[user].deposits.length;
   }
 
-  function depositById(uint32 depositId) external view override returns (USDDeposit memory, address user) {
+  function depositById(uint64 depositId) external view override returns (USDDeposit memory, address user) {
     DepositInfo memory info = _depositsById[depositId];
     return (depositByIndex(info.user, uint256(info.index)), info.user);
   }

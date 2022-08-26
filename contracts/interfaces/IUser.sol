@@ -2,10 +2,10 @@
 pragma solidity 0.8.11;
 
 interface IUser {
-  event USDDeposited(address user, uint8 tokenType, uint128 amount, uint32 depositId);
+  event USDDeposited(address user, uint8 tokenType, uint128 amount, uint64 depositId);
 
   struct USDDeposit {
-    uint32 id;
+    uint64 id;
     uint8 tokenType;
     uint128 amount;
     uint32 createdAt;
