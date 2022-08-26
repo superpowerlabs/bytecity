@@ -81,7 +81,7 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
     return _users[user].amounts[tokenType];
   }
 
-  function depositsAmount(address user) external view override returns (uint256) {
+  function numberOfDeposits(address user) external view override returns (uint256) {
     return _users[user].deposits.length;
   }
 
