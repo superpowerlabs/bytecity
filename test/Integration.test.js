@@ -60,5 +60,9 @@ describe("#Integration test", function () {
 
     expect((await city.depositById(3726354))[0].id).equal(0)
 
+    expect(await city.numberOfDeposits(deployer.address)).equal(2)
+
+    expect(await city.numberOfDeposits(fred.address)).equal(0)
+
   });
 });
