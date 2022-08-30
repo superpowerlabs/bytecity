@@ -10,13 +10,13 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "soliutils/contracts/UUPSUpgradableTemplate.sol";
 
 import "../interfaces/IBadge.sol";
 
 //import "hardhat/console.sol";
 
-contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
-  event ImplementationUpgraded(address newImplementation);
+contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradableTemplate {
   using AddressUpgradeable for address;
 
   string private _baseTokenURI;
@@ -52,8 +52,7 @@ contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, 
     string memory tokenUri
   ) public initializer {
     __ERC721_init(name, symbol);
-    __Ownable_init();
-    __UUPSUpgradeable_init();
+    __UUPSUpgradableTemplate_init();
     _baseTokenURI = tokenUri;
     _nextTokenId = 1;
   }
