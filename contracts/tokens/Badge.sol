@@ -7,14 +7,16 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "soliutils/contracts/UUPSUpgradableTemplate.sol";
 
 import "../interfaces/IBadge.sol";
 
 //import "hardhat/console.sol";
 
-contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradableTemplate {
+contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
+  event ImplementationUpgraded(address newImplementation);
   using AddressUpgradeable for address;
 
   string private _baseTokenURI;
@@ -51,6 +53,7 @@ contract Badge is IBadge, Initializable, ERC721Upgradeable, OwnableUpgradeable, 
   ) public initializer {
     __ERC721_init(name, symbol);
     __Ownable_init();
+    __UUPSUpgradeable_init();
     _baseTokenURI = tokenUri;
     _nextTokenId = 1;
   }
