@@ -1,6 +1,5 @@
 const {assert, expect} = require("chai");
 const ethers = require("ethers");
-const {hexZeroPad} = require("@ethersproject/bytes");
 
 const Helpers = {
   initEthers(ethers0) {
@@ -35,22 +34,6 @@ const Helpers = {
     await this.ethers.provider.send("evm_mine");
   },
 
-  bytes32Address(address) {
-    return hexZeroPad(address, 32);
-  },
-
-  mockEncodedVm(addr, payload) {
-    addr = addr.substring(2);
-    payload = hexZeroPad(this.ethers.BigNumber.from(payload).toHexString(), 32).substring(2);
-    let vaaBytes = [];
-    for (let k = 0; k < addr.length; k += 2) {
-      vaaBytes.push(parseInt(addr.substring(k, k + 2), 16));
-    }
-    for (let k = 0; k < payload.length; k += 2) {
-      vaaBytes.push(parseInt(payload.substring(k, k + 2), 16));
-    }
-    return new Int32Array(vaaBytes);
-  },
 
   BN(s, zeros = 0) {
     return ethers.BigNumber.from((s || 0).toString() + "0".repeat(zeros));
@@ -70,21 +53,21 @@ const Helpers = {
   getInt(val) {
     return parseInt(ethers.utils.formatEther(val.toString()));
   },
-};
 
-Helpers.tokenTypes = {
-  S_SYNR_SWAP: 1,
-  SYNR_STAKE: 2,
-  SYNR_PASS_STAKE_FOR_BOOST: 3,
-  SYNR_PASS_STAKE_FOR_SEEDS: 4,
-  BLUEPRINT_STAKE_FOR_BOOST: 5,
-  BLUEPRINT_STAKE_FOR_SEEDS: 6,
-  SEED_SWAP: 7,
-};
+  randomNonce() {
+    return Math.random().toString().split(".")[1];
+  },
 
-// for compatibility with previous tests
-for (let key in Helpers.tokenTypes) {
-  Helpers[key] = Helpers.tokenTypes[key];
-}
+  async signPackedData(
+      hash,
+      // hardhat account #4, starting from #0
+      privateKey = "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+  ) {
+    const signingKey = new this.ethers.utils.SigningKey(privateKey);
+    const signedDigest = signingKey.signDigest(hash);
+    return this.ethers.utils.joinSignature(signedDigest);
+  },
+
+};
 
 module.exports = Helpers;

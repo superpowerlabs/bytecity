@@ -7,8 +7,9 @@ const {initEthers, assertThrowsMessage, BN} = require("./helpers");
 describe("ByteCity", function () {
   const stableCoinId1 = 1;
   const stableCoinId2 = 2;
-  const unsuportedCoinId = 3;
+  const unsupportedCoinId = 3;
   let city;
+  let usdc, usdt;
   let deployer, bob, treasury;
   let deployUtils = new DeployUtils(ethers);
 
@@ -22,20 +23,17 @@ describe("ByteCity", function () {
     usdt = await deployUtils.deploy("TetherMock");
     city = await deployUtils.deployProxy("ByteCity");
 
-    await deployUtils.Tx(city.addStableCoin(stableCoinId1, usdt.address), "Setting tether");
-    await deployUtils.Tx(city.addStableCoin(stableCoinId2, usdc.address), "Setting USDC");
+    expect(await city.addStableCoin(stableCoinId1, usdt.address))
+        .emit(city, "StableCoinAdded")
+        .withArgs(stableCoinId1, usdt.address);
+
+    expect(await city.addStableCoin(stableCoinId2, usdc.address))
+        .emit(city, "StableCoinAdded")
+        .withArgs(stableCoinId1, usdt.address);
   }
 
   beforeEach(async function () {
     await initAndDeploy();
-  });
-
-  // addStableCoin(uint8 tokenType, address stableCoin)
-  it.skip("should add USDT to the pool (happy path)", async function () {
-    // fails bc coin already added
-    await expect(city.addStableCoin(stableCoinId3, stableCoin.address))
-      .emit(city, "StableCoinAdded")
-      .withArgs(stableCoinId1, stableCoin);
   });
 
   it("should fail to add stable coin with 'ByteCity: token not a contract' (unhappy path)", async function () {
@@ -48,7 +46,7 @@ describe("ByteCity", function () {
   });
 
   it("should fail to add stable coin with 'ByteCity: invalid tokenType' (unhappy path)", async function () {
-    await expect(city.addStableCoin(unsuportedCoinId, usdt.address)).revertedWith("ByteCity: invalid tokenType");
+    await expect(city.addStableCoin(unsupportedCoinId, usdt.address)).revertedWith("ByteCity: invalid tokenType");
   });
 
   // deposit(uint8 tokenType, uint256 amount, uint32 depositId)
@@ -74,7 +72,7 @@ describe("ByteCity", function () {
     const amount = ethers.utils.parseEther("10000");
     const id = 123456;
     await usdc.approve(city.address, amount.mul(3));
-    await expect(city.deposit(unsuportedCoinId, amount, id)).revertedWith("ByteCity: unsupported stable coin");
+    await expect(city.deposit(unsupportedCoinId, amount, id)).revertedWith("ByteCity: unsupported stable coin");
   });
 
   it("should fail to deposit token with 'ByteCity: depositId already used' (unhappy path)", async function () {

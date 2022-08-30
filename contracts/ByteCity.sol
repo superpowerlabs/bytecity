@@ -7,22 +7,26 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./interfaces/IERC20Receiver.sol";
 import "./interfaces/IByteCity.sol";
+import "./interfaces/IBadgeData.sol";
+import "./interfaces/IBadge.sol";
 import "./utils/Constants.sol";
+import "./utils/Signable.sol";
 
 //import "hardhat/console.sol";
 
-contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, OwnableUpgradeable, UUPSUpgradeable {
+contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Signable, UUPSUpgradeable {
   using AddressUpgradeable for address;
   using SafeMathUpgradeable for uint256;
 
   mapping(uint8 => address) private _stableCoins;
   mapping(uint64 => DepositInfo) private _depositsById;
   mapping(address => User) private _users;
+  IBadge public badge;
+  mapping(bytes32 => uint8) private _usedSignatures;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() initializer {}
@@ -41,6 +45,12 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
     bytes calldata
   ) external pure override returns (bytes4) {
     return this.onERC20Received.selector;
+  }
+
+  function setBadge(address badge_) external virtual override onlyOwner {
+    require(badge_.isContract(), "Badge: badge_ not a contract");
+    badge = IBadge(badge_);
+    emit BadgeSet(badge_);
   }
 
   function addStableCoin(uint8 tokenType, address stableCoin) external override onlyOwner {
@@ -102,5 +112,63 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Ownabl
       amount = balance;
     }
     token.transfer(beneficiary, amount);
+  }
+
+  function updateBadgeAttributes(
+    uint256 tokenId,
+    IBadgeData.BadgeAttributes calldata attributes,
+    uint256 randomNonce,
+    bytes calldata signature0,
+    bytes calldata signature1
+  ) external {
+    require(
+      isSignedByValidator(0, hashBadgeAttributes(tokenId, attributes, randomNonce), signature0),
+      "GamePool: invalid signature0"
+    );
+    require(
+      isSignedByValidator(1, hashBadgeAttributes(tokenId, attributes, randomNonce), signature1),
+      "GamePool: invalid signature1"
+    );
+    _saveSignatureAsUsed(signature0);
+    _saveSignatureAsUsed(signature1);
+    badge.updateAttributes(tokenId, 0, uint256(attributes.level));
+  }
+
+  function getBadgeAttributes(uint256 tokenId) external view returns (IBadgeData.BadgeAttributes memory) {
+    uint256 attributes = badge.attributesOf(tokenId, address(this), 0);
+    return IBadgeData.BadgeAttributes({level: uint8(attributes)});
+  }
+
+  function attributesOf(address _token, uint256 tokenId) external view override returns (string memory) {
+    if (_token == address(badge)) {
+      uint256 attributes = badge.attributesOf(tokenId, address(this), 0);
+      if (attributes != 0) {
+        return string(abi.encodePacked("uint8 level:", StringsUpgradeable.toString(uint8(attributes))));
+      }
+    }
+    return "";
+  }
+
+  function _saveSignatureAsUsed(bytes memory _signature) internal {
+    bytes32 key = keccak256(abi.encodePacked(_signature));
+    require(_usedSignatures[key] == 0, "ByteCity: signature already used");
+    _usedSignatures[key] = 1;
+  }
+
+  function hashBadgeAttributes(
+    uint256 tokenId,
+    IBadgeData.BadgeAttributes calldata attributes,
+    uint256 randomNonce
+  ) public view returns (bytes32) {
+    return
+      keccak256(
+        abi.encodePacked(
+          "\x19\x01", // EIP-191
+          block.chainid,
+          tokenId,
+          attributes.level,
+          randomNonce
+        )
+      );
   }
 }

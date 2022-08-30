@@ -2,9 +2,13 @@
 pragma solidity 0.8.11;
 
 import "./IUser.sol";
+import "./IBadgeData.sol";
 
 interface IByteCity is IUser {
   event StableCoinAdded(uint8 tokenType, address stableCoin);
+  event BadgeSet(address badge);
+
+  function setBadge(address badge_) external;
 
   function addStableCoin(uint8 tokenType, address stableCoin) external;
 
@@ -31,4 +35,16 @@ interface IByteCity is IUser {
     uint256 amount,
     address beneficiary
   ) external;
+
+  function updateBadgeAttributes(
+    uint256 tokenId,
+    IBadgeData.BadgeAttributes calldata attributes,
+    uint256 randomNonce,
+    bytes calldata signature0,
+    bytes calldata signature1
+  ) external;
+
+  function getBadgeAttributes(uint256 tokenId) external view returns (IBadgeData.BadgeAttributes memory);
+
+  function attributesOf(address _token, uint256 tokenId) external view returns (string memory);
 }
