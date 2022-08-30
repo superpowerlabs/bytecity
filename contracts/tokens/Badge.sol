@@ -73,7 +73,7 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
     uint256 _attributes
   ) external override {
     require(_tokenAttributes[_id][_msgSender()][0] != 0, "Badge: player not authorized");
-    // notice that if the playes set the attributes to zero, it de-authorize itself
+    // notice that if the player set the attributes to zero, it de-authorize itself
     // and not more changes will be allowed until the NFT owner authorize it again
     _tokenAttributes[_id][_msgSender()][_index] = _attributes;
   }
