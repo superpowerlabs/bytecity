@@ -54,10 +54,6 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
     _nextTokenId = 1;
   }
 
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {
-    emit ImplementationUpgraded(newImplementation);
-  }
-
   function attributesOf(
     uint256 _id,
     address _player,

@@ -35,8 +35,6 @@ contract ByteCity is IERC20Receiver, IByteCity, Constants, Signable, UUPSUpgrada
     __Ownable_init();
   }
 
-  function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
-
   function onERC20Received(
     address,
     address,

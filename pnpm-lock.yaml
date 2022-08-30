@@ -33,7 +33,7 @@ specifiers:
   solhint: ^3.3.7
   solidity-coverage: ^0.7.20
   solium: ^1.2.5
-  soliutils: ^0.0.5
+  soliutils: ^0.0.6
   typescript: ^4.6.3
 
 dependencies:
@@ -71,7 +71,7 @@ devDependencies:
   solhint: 3.3.7
   solidity-coverage: 0.7.20
   solium: 1.2.5
-  soliutils: 0.0.5
+  soliutils: 0.0.6
   typescript: 4.6.3
 
 packages:
@@ -8868,8 +8868,8 @@ packages:
       - supports-color
     dev: true
 
-  /soliutils/0.0.5:
-    resolution: {integrity: sha512-aQxNiCnIOymB4xzNEXAQolllDg+7BBQ/vrrUdcyLWGJlYGIx+keg4nmYrnrxEfWXALdjbN/Q0y+Lag1BbeZCbQ==}
+  /soliutils/0.0.6:
+    resolution: {integrity: sha512-2JNbZ3K0D9WUkauhaRIp1m5AoPbOw2VFoDWipyrF8JpjvmCs1ZEd7n6u4SeUR4/skd8o5dTY/guW6O9j0EBzVw==}
     dependencies:
       '@openzeppelin/contracts': 4.5.0
       '@openzeppelin/contracts-upgradeable': 4.5.2
