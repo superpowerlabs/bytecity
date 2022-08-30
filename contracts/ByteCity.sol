@@ -4,10 +4,9 @@ pragma solidity 0.8.11;
 // Author: Francesco Sullo <francesco@sullo.co>
 // (c) 2022+ SuperPower Labs Inc.
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "soliutils/contracts/UUPSUpgradableTemplate.sol";
 
 import "./interfaces/IERC20Receiver.sol";
 import "./interfaces/IByteCity.sol";
@@ -18,7 +17,7 @@ import "./utils/Signable.sol";
 
 //import "hardhat/console.sol";
 
-contract ByteCity is IERC20Receiver, IByteCity, Constants, Initializable, Signable, UUPSUpgradeable {
+contract ByteCity is IERC20Receiver, IByteCity, Constants, Signable, UUPSUpgradableTemplate {
   using AddressUpgradeable for address;
   using SafeMathUpgradeable for uint256;
 
