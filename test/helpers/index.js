@@ -34,7 +34,6 @@ const Helpers = {
     await this.ethers.provider.send("evm_mine");
   },
 
-
   BN(s, zeros = 0) {
     return ethers.BigNumber.from((s || 0).toString() + "0".repeat(zeros));
   },
@@ -59,15 +58,14 @@ const Helpers = {
   },
 
   async signPackedData(
-      hash,
-      // hardhat account #4, starting from #0
-      privateKey = "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    hash,
+    // hardhat account #4, starting from #0
+    privateKey = "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
   ) {
     const signingKey = new this.ethers.utils.SigningKey(privateKey);
     const signedDigest = signingKey.signDigest(hash);
     return this.ethers.utils.joinSignature(signedDigest);
   },
-
 };
 
 module.exports = Helpers;

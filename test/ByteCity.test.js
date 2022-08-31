@@ -24,12 +24,12 @@ describe("ByteCity", function () {
     city = await deployUtils.deployProxy("ByteCity");
 
     expect(await city.addStableCoin(stableCoinId1, usdt.address))
-        .emit(city, "StableCoinAdded")
-        .withArgs(stableCoinId1, usdt.address);
+      .emit(city, "StableCoinAdded")
+      .withArgs(stableCoinId1, usdt.address);
 
     expect(await city.addStableCoin(stableCoinId2, usdc.address))
-        .emit(city, "StableCoinAdded")
-        .withArgs(stableCoinId1, usdt.address);
+      .emit(city, "StableCoinAdded")
+      .withArgs(stableCoinId1, usdt.address);
   }
 
   beforeEach(async function () {
