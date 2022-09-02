@@ -24,4 +24,6 @@ interface IBadge is IAttributable {
   function nextTokenId() external view returns (uint256);
 
   function batchMint(address[] memory to) external;
+
+  function ownedBy(address owner) external view returns (uint256);
 }

@@ -24,6 +24,7 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
   address public minter;
 
   mapping(uint256 => mapping(address => mapping(uint256 => uint256))) internal _tokenAttributes;
+  mapping(address => uint256) internal _idByAddress;
 
   modifier onlyCity() {
     require(city != address(0) && _msgSender() == city, "Badge: not the city");
@@ -125,9 +126,14 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
         _safeMint(to[i], _nextTokenId);
         // initialize the on-chain attributes
         _tokenAttributes[_nextTokenId][city][0] = 1;
+        _idByAddress[to[i]] = _nextTokenId;
         emit AttributesInitializedFor(_nextTokenId++, city);
       }
     }
+  }
+
+  function ownedBy(address owner) external view override returns (uint256) {
+    return _idByAddress[owner];
   }
 
   // manage not transferability

@@ -83,6 +83,10 @@ describe("#Integration test", function () {
     expect(await badge.ownerOf(2)).equal(alice.address);
     expect(await badge.ownerOf(3)).equal(fred.address);
 
+    expect(await badge.ownedBy(bob.address)).equal(1);
+    expect(await badge.ownedBy(alice.address)).equal(2);
+    expect(await badge.ownedBy(fred.address)).equal(3);
+
     expect(badge.connect(bob).transferFrom(bob.address, treasury.address, 1)).revertedWith("Badge: forbidden");
 
     await badge.batchMint([bob.address]);
