@@ -5,6 +5,7 @@ pragma solidity 0.8.11;
 // (c) Superpower Labs Inc.
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "soliutils/contracts/UUPSUpgradableTemplate.sol";
@@ -13,7 +14,7 @@ import "../interfaces/IBadge.sol";
 
 //import "hardhat/console.sol";
 
-contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
+contract Badge is IBadge, ERC721Upgradeable, IERC721EnumerableUpgradeable, UUPSUpgradableTemplate {
   using AddressUpgradeable for address;
 
   string private _baseTokenURI;
@@ -79,7 +80,7 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
     _tokenAttributes[_id][_msgSender()][_index] = _attributes;
   }
 
-  function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public view override(IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
     return super.supportsInterface(interfaceId);
   }
 
@@ -132,25 +133,34 @@ contract Badge is IBadge, ERC721Upgradeable, UUPSUpgradableTemplate {
     }
   }
 
-  function ownedBy(address owner) external view override returns (uint256) {
+  function totalSupply() external view override returns (uint256) {
+    return _nextTokenId - 1;
+  }
+
+  function tokenOfOwnerByIndex(address owner, uint256 index) external view override returns (uint256) {
+    require(index == 0, "ERC721Enumerable: owner index out of bounds");
     return _idByAddress[owner];
+  }
+
+  function tokenByIndex(uint256 index) external view override returns (uint256) {
+    return index;
   }
 
   // manage not transferability
 
-  function approve(address, uint256) public override {
+  function approve(address, uint256) public override(ERC721Upgradeable, IERC721Upgradeable) {
     revert("Badge: cannot be approved");
   }
 
-  function setApprovalForAll(address, bool) public override {
+  function setApprovalForAll(address, bool) public override(ERC721Upgradeable, IERC721Upgradeable) {
     revert("Badge: cannot be approved");
   }
 
-  function getApproved(uint256) public view override returns (address) {
+  function getApproved(uint256) public view override(ERC721Upgradeable, IERC721Upgradeable) returns (address) {
     return address(0);
   }
 
-  function isApprovedForAll(address, address) public view override returns (bool) {
+  function isApprovedForAll(address, address) public view override(ERC721Upgradeable, IERC721Upgradeable) returns (bool) {
     return false;
   }
 
