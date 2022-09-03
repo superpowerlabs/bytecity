@@ -83,9 +83,11 @@ describe("#Integration test", function () {
     expect(await badge.ownerOf(2)).equal(alice.address);
     expect(await badge.ownerOf(3)).equal(fred.address);
 
-    expect(await badge.ownedBy(bob.address)).equal(1);
-    expect(await badge.ownedBy(alice.address)).equal(2);
-    expect(await badge.ownedBy(fred.address)).equal(3);
+    expect(await badge.tokenOfOwnerByIndex(bob.address, 0)).equal(1);
+    expect(await badge.tokenOfOwnerByIndex(alice.address, 0)).equal(2);
+    expect(await badge.tokenOfOwnerByIndex(fred.address, 0)).equal(3);
+
+    expect(badge.tokenOfOwnerByIndex(fred.address, 1)).revertedWith("ERC721Enumerable: owner index out of bounds");
 
     expect(badge.connect(bob).transferFrom(bob.address, treasury.address, 1)).revertedWith("Badge: forbidden");
 
