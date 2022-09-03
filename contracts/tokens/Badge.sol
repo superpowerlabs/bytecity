@@ -81,7 +81,7 @@ contract Badge is IBadge, ERC721Upgradeable, IERC721EnumerableUpgradeable, UUPSU
   }
 
   function supportsInterface(bytes4 interfaceId) public view override(IERC165Upgradeable, ERC721Upgradeable) returns (bool) {
-    return super.supportsInterface(interfaceId);
+    return interfaceId == type(IERC721EnumerableUpgradeable).interfaceId || super.supportsInterface(interfaceId);
   }
 
   function _baseURI() internal view virtual override returns (string memory) {
