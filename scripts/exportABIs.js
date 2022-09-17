@@ -18,8 +18,9 @@ async function main() {
     ABIs.contracts[rename || name] = json.abi;
   }
 
-  abi("USDCoinMock", "token");
-  abi("TetherMock", "token");
+  abi("USDCoinMock", "mocks");
+  abi("TetherMock", "mocks");
+  abi("Badge", "tokens");
   abi("ByteCity");
 
   await fs.writeFile(path.resolve(__dirname, "../export/ABIs.json"), JSON.stringify(ABIs, null, 2));
